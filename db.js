@@ -1,4 +1,13 @@
+const express = require('express')
+const morgan = require('morgan')
 const {Sequelize, DataTypes} = require('sequelize')
+const bodyParser = require('body-parser')
+
+const app = express()
+app.use(morgan('short'))
+app.use(express.static('./public'))
+app.use(express.json())
+app.use(bodyParser.urlencoded({extended: false}))
 
 const sequelize = new Sequelize('db', 'postgres', 'postgres', {
   host: 'localhost',
@@ -54,5 +63,22 @@ const Article = sequelize.define('Article', {
 	}
 })
 
-sequelize.sync({ force: true });
-// console.log('Table for the User model was created!')
+// CRUD API for main page
+app.get('/', (req, res) => res.json({ message: 'Hello World' }))
+
+// User Create (POST)
+app.post('/user', async (req, res) => {
+	const newUser = User.create({
+		name: req.body.name,
+		email: req.body.email,
+		password: req.body.email
+	}).then((user) => res.status(201).send(user)).catch((error) => {
+		console.log(error);
+		res.status(400).send(error);
+	});
+	res.json({
+		user: newUser
+	}) // Returns the new user that is created in the database
+})
+
+app.listen(3000, () => console.log(`Server listening on 3000!`))
