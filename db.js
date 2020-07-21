@@ -63,8 +63,14 @@ const Article = sequelize.define('Article', {
 	}
 })
 
-// CRUD API for main page
-app.get('/', (req, res) => res.json({ message: 'Hello World' }))
+// Routing HTML API's
+app.get('/', (req, res) => {
+	res.sendFile('./public/main.html', {root: __dirname});
+})
+
+app.get('/createUser', (req, res) => {
+	res.sendFile('./public/create_form.html', {root: __dirname});
+})
 
 // User Create (POST)
 app.post('/user', async (req, res) => {
@@ -78,7 +84,7 @@ app.post('/user', async (req, res) => {
 	});
 	res.json({
 		user: newUser
-	}) // Returns the new user that is created in the database
+	})
 })
 
 app.listen(3000, () => console.log(`Server listening on 3000!`))
