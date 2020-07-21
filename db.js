@@ -74,13 +74,10 @@ app.get('/createUser', (req, res) => {
 
 // User Create (POST)
 app.post('/user', async (req, res) => {
-	const newUser = User.create({
+	const newUser = await User.create({
 		name: req.body.name,
 		email: req.body.email,
-		password: req.body.email
-	}).then((user) => res.status(201).send(user)).catch((error) => {
-		console.log(error);
-		res.status(400).send(error);
+		password: req.body.password
 	});
 	res.json({
 		user: newUser
