@@ -81,4 +81,9 @@ app.post('/user', async (req, res) => {
 	}) // Returns the new user that is created in the database
 })
 
+// User Read (GET)
+app.get('/user', async(req, res) => {
+	const users = await User.findAll();
+}).th
+
 app.listen(3000, () => console.log(`Server listening on 3000!`))
