@@ -79,9 +79,9 @@ app.post('/user', async (req, res) => {
 		email: req.body.email,
 		password: req.body.password
 	});
-	res.json({
-		user: newUser
-	})
+	res.status(201).send({
+		message: 'User has been created!'
+	});
 })
 
 app.listen(3000, () => console.log(`Server listening on 3000!`))
