@@ -72,6 +72,12 @@ app.get('/createUser', (req, res) => {
 	res.sendFile('./public/create_form.html', {root: __dirname});
 })
 
+// Article Get (READ)
+app.get('/article', async (req, res) => {
+	const articles = await Article.findAll();
+	res.status(200).send(articles);
+});
+
 // User Create (POST)
 app.post('/user', async (req, res) => {
 	const newUser = await User.create({
