@@ -84,6 +84,7 @@ app.post('/user', async (req, res) => {
 // User Read (GET)
 app.get('/user', async(req, res) => {
 	const users = await User.findAll();
-}).th
+	res.send(users);
+})
 
 app.listen(3000, () => console.log(`Server listening on 3000!`))
