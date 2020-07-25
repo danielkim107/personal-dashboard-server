@@ -66,6 +66,10 @@ const Article = sequelize.define('Article', {
 // CRUD API for main page
 app.get('/', (req, res) => res.json({ message: 'Hello World' }))
 
+app.get('/createArticle', (req, res) => {
+	res.sendFile('./public/create_article.html', {root: __dirname})
+});
+
 // User Create (POST)
 app.post('/user', async (req, res) => {
 	const newUser = User.create({
@@ -84,7 +88,17 @@ app.post('/user', async (req, res) => {
 // User Read (GET)
 app.get('/user', async(req, res) => {
 	const users = await User.findAll();
-	res.send(users);
+	res.status(200).send(users);
+})
+
+// Article Create (POST)
+app.post('/article', async (req, res) => {
+	const newArticle = Article.create({
+		author: req.body,author,
+		title: req.body.title,
+		content: req.body.content
+	});
+	res.status(201).send(newArticle)
 })
 
 app.listen(3000, () => console.log(`Server listening on 3000!`))
