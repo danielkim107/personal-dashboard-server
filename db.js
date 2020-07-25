@@ -66,6 +66,12 @@ const Article = sequelize.define('Article', {
 // CRUD API for main page
 app.get('/', (req, res) => res.json({ message: 'Hello World' }))
 
+// Article Get (READ)
+app.get('/article', async (req, res) => {
+	const articles = await Article.findAll();
+	res.status(200).send(articles);
+});
+
 // User Create (POST)
 app.post('/user', async (req, res) => {
 	const newUser = User.create({
