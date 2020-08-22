@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 const sequelize = new Sequelize('db', 'postgres', 'postgres', {
     dialect: 'postgres',
-    host: 'db'
+    host: 'localhost'
 });
 
 sequelize.authenticate().then(() => {
@@ -74,6 +74,11 @@ app.get('/', (req, res) => {
 
     res.sendFile('./public/main.html', { root: __dirname });
 
+})
+
+app.get('/restartDb', (req, res) => {
+	sequelize.sync({ force: true });
+	res.send('DB를 리셋했습니다.');
 })
 
 app.get('/createUser', (req, res) => {
