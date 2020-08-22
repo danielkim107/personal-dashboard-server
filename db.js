@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 const sequelize = new Sequelize('db', 'postgres', 'postgres', {
     dialect: 'postgres',
-    host: 'localhost'
+    host: 'db'
 });
 
 sequelize.authenticate().then(() => {
