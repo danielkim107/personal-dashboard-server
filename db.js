@@ -94,7 +94,6 @@ app.get('/article', async (req, res) => {
     const articles = await Article.findAll();
 
     res.status(200).send(articles);
-
 });
 
 // User Create (POST)
@@ -110,7 +109,6 @@ app.post('/user', async (req, res) => {
         message: 'User has been created!',
         user: newUser
     });
-
 })
 
 // User Read (GET)
@@ -119,20 +117,16 @@ app.get('/user', async (req, res) => {
     const users = await User.findAll();
 
     res.status(200).send(users);
-
 })
 
 // Article Create (POST)
 app.post('/article', async (req, res) => {
-
     const newArticle = await Article.create({
         author: req.body.author,
         content: req.body.content,
         title: req.body.title
     });
-
     res.status(201).send(newArticle)
-
 })
 
 app.listen(3000, () => console.log('Server listening on 3000!'))
