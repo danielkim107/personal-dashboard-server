@@ -23,16 +23,28 @@ sequelize.authenticate().then(() => {
 }).catch((err) => {
     console.error('Unable to connect to the database:', err);
 });
-	
-const Entry = sequelize.define('Entries', {
+
+const User = sequelize.define('user', {
 	id: {
 		autoIncrement: true,
 		primaryKey: true,
 		type: DataTypes.INTEGER
 	},
-	author: {
+	username: {
 		allowNull: false,
-		type: DataTypes.STRING
+		type: DataTypes.TEXT
+	},
+	password: {
+		allowNull: false,
+		type: DataTypes.TEXT
+	}
+});
+	
+const Entry = sequelize.define('entry', {
+	id: {
+		autoIncrement: true,
+		primaryKey: true,
+		type: DataTypes.INTEGER
 	},
 	title: {
 		allowNull: false,
@@ -42,7 +54,9 @@ const Entry = sequelize.define('Entries', {
 		allowNull: false,
 		type: DataTypes.STRING
 	}
-})
+});
+
+Entry.belongsTo(User, {foreignKey: 'userId'});
 
 // Routing HTML API's
 app.get('/', (req, res) => {
@@ -58,14 +72,26 @@ app.get('/restartDb', (req, res) => {
 
 // Article Get (READ)
 app.get('/entry', async (req, res) => {
-    const entries = await Entry.findAll({
-		attributes: ['id', 'author', 'title', 'createdAt'],
+    let entries = await Entry.findAll({
+		attributes: ['id', 'title', 'createdAt'],
 		order: [
 			['id', 'DESC'],
-		]
+		],
+		include: [{model: User, attributes: ['id', 'username']}]
 	});
 
     res.status(200).send(entries);
+});
+
+app.get('/user', async (req, res) => {
+	let users = await User.findAll({
+		attributes: ['id', 'username'],
+		order: [
+			['id', 'DESC'],
+		],
+	});
+
+	res.status(200).send(users);
 });
 
 app.get('/entry/:id', async (req, res) => {
@@ -75,12 +101,12 @@ app.get('/entry/:id', async (req, res) => {
 	} else {
 		res.status(200).send(entry);
 	}
-})
+});
 
 // User Create (POST)
 app.post('/entry', async (req, res) => {
 	const newEntry = await Entry.create({
-        author: req.body.author,
+        userId: req.body.userId,
         content: req.body.content,
         title: req.body.title
 	});
@@ -91,9 +117,22 @@ app.post('/entry', async (req, res) => {
     });
 });
 
+app.post('/user', async (req, res) => {
+	console.log(req);
+	const newUser = await User.create({
+		username: req.body.username,
+		password: req.body.password
+	});
+
+	res.status(201).send({
+		message: 'User has been created!',
+		user: newUser
+	});
+});
+
 app.put('/entry/:id', async (req, res) => {
-	const entry = await Entry.findByPk(parseInt(req.params.id));
-	entry.author = req.body.author;
+	let entry = await Entry.findByPk(parseInt(req.params.id));
+	entry.userId = req.body.userId;
 	entry.content = req.body.content;
 	entry.title = req.body.title;
 	entry.save();
@@ -110,6 +149,28 @@ app.delete('/entry/:id', async (req, res) => {
 
 	res.status(204).send({
 		message: 'Entry has been deleted.',
+	});
+});
+
+// User Create (POST)
+app.put('/user/:id', async (req, res) => {
+	let user = await User.findByPk(parseInt(req.params.id));
+	user.username = req.body.username;
+	user.password = req.body.password;
+	user.save();
+
+    res.status(201).send({
+        message: 'User has been updated.',
+        user: user
+    });
+});
+
+app.delete('/user/:id', async (req, res) => {
+	const user = await User.findByPk(parseInt(req.params.id));
+	user.destroy();
+
+	res.status(204).send({
+		message: 'User has been deleted.',
 	});
 });
 
