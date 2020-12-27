@@ -7,6 +7,9 @@ services:
     depends_on: 
       - db
     restart: always
+    volumes:
+      - ./:/usr/src/app
+    command: nodemon db.js
   db:
     image: postgres:12
     restart: always
