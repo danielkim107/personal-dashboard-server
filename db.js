@@ -3,7 +3,14 @@ const morgan = require('morgan');
 const cors = require('cors');
 const { Sequelize, DataTypes } = require('sequelize');
 const bodyParser = require('body-parser');
-const e = require('express');
+const session = require('express-session');
+const redis = require('redis');
+const redisStore = require('connect-redis')(session);
+const client  = redis.createClient({
+	host: 'redis',
+	port: 6379,
+	
+});
 
 const app = express();
 
@@ -12,6 +19,14 @@ app.use(express.static('./public'));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
+app.use(session({
+	store: new redisStore({client: client, ttl : 260}),
+	secret: 'mySecret',
+	resave: false,
+	saveUninitialized: true,
+	loggedIn: false,
+	userId: null
+}));
 
 const sequelize = new Sequelize('db', 'postgres', 'postgres', {
     dialect: 'postgres',
@@ -60,9 +75,11 @@ Entry.belongsTo(User, {foreignKey: 'userId'});
 
 // Routing HTML API's
 app.get('/', (req, res) => {
-
-    res.send('Hello World');
-
+	if (req.session.loggedIn) {
+		res.send('Hello World');
+	} else {
+		res.status(400).send({message: 'Please login to see the page'});
+	}
 })
 
 app.get('/restartDb', (req, res) => {
@@ -70,30 +87,41 @@ app.get('/restartDb', (req, res) => {
 	res.send('DB를 리셋했습니다.');
 })
 
-// Article Get (READ)
+// Login/Authentication API
+app.post('/auth', async (req, res) => {
+	let username = req.body.username;
+	let password = req.body.password;
+	if (username && password) {
+		let user = await User.findOne({where: {username: username, password: password}, attributes: ['id', 'username']});
+		if (user === null) {
+			res.status(400).send({message: 'Incorrect username and/or password!'});
+		} else {
+			req.session.loggedIn = true;
+			req.session.userId = user.id;
+			res.status(200).send({message: 'User has been authenticated.', user: user});
+		}
+	} else {
+		res.status(400).send({message: 'Please enter Username and Password.'});
+	}
+});
+app.get('/logout', (req, res) => {
+	req.session.loggedIn = false;
+	req.session.userId = null;
+	res.status(204).send({message: 'User has been logged out.'});
+})
+
+
+// Entry API
 app.get('/entry', async (req, res) => {
-    let entries = await Entry.findAll({
+	let entries = await Entry.findAll({
 		attributes: ['id', 'title', 'createdAt'],
 		order: [
 			['id', 'DESC'],
 		],
 		include: [{model: User, attributes: ['id', 'username']}]
 	});
-
-    res.status(200).send(entries);
+	res.status(200).send(entries);
 });
-
-app.get('/user', async (req, res) => {
-	let users = await User.findAll({
-		attributes: ['id', 'username'],
-		order: [
-			['id', 'DESC'],
-		],
-	});
-
-	res.status(200).send(users);
-});
-
 app.get('/entry/:id', async (req, res) => {
 	const entry = await Entry.findByPk(parseInt(req.params.id));
 	if (entry === null) {
@@ -102,8 +130,6 @@ app.get('/entry/:id', async (req, res) => {
 		res.status(200).send(entry);
 	}
 });
-
-// User Create (POST)
 app.post('/entry', async (req, res) => {
 	const newEntry = await Entry.create({
         userId: req.body.userId,
@@ -116,20 +142,6 @@ app.post('/entry', async (req, res) => {
         entry: newEntry
     });
 });
-
-app.post('/user', async (req, res) => {
-	console.log(req);
-	const newUser = await User.create({
-		username: req.body.username,
-		password: req.body.password
-	});
-
-	res.status(201).send({
-		message: 'User has been created!',
-		user: newUser
-	});
-});
-
 app.put('/entry/:id', async (req, res) => {
 	let entry = await Entry.findByPk(parseInt(req.params.id));
 	entry.userId = req.body.userId;
@@ -142,7 +154,6 @@ app.put('/entry/:id', async (req, res) => {
 		entry: entry
 	});
 });
-
 app.delete('/entry/:id', async (req, res) => {
 	const entry = await Entry.findByPk(parseInt(req.params.id));
 	entry.destroy();
@@ -152,7 +163,28 @@ app.delete('/entry/:id', async (req, res) => {
 	});
 });
 
-// User Create (POST)
+// User API
+app.get('/user', async (req, res) => {
+	let users = await User.findAll({
+		attributes: ['id', 'username'],
+		order: [
+			['id', 'DESC'],
+		],
+	});
+
+	res.status(200).send(users);
+});
+app.post('/user', async (req, res) => {
+	const newUser = await User.create({
+		username: req.body.username,
+		password: req.body.password
+	});
+
+	res.status(201).send({
+		message: 'User has been created!',
+		user: newUser
+	});
+});
 app.put('/user/:id', async (req, res) => {
 	let user = await User.findByPk(parseInt(req.params.id));
 	user.username = req.body.username;
@@ -164,7 +196,6 @@ app.put('/user/:id', async (req, res) => {
         user: user
     });
 });
-
 app.delete('/user/:id', async (req, res) => {
 	const user = await User.findByPk(parseInt(req.params.id));
 	user.destroy();
