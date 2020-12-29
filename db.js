@@ -11,7 +11,6 @@ const client  = redis.createClient({
 	port: 6379,
 	
 });
-
 const app = express();
 
 app.use(morgan('short'));
@@ -112,15 +111,25 @@ app.get('/logout', (req, res) => {
 
 
 // Entry API
-app.get('/entry', async (req, res) => {
-	let entries = await Entry.findAll({
-		attributes: ['id', 'title', 'createdAt'],
-		order: [
-			['id', 'DESC'],
-		],
-		include: [{model: User, attributes: ['id', 'username']}]
+app.get('/entry', (req, res) => {
+	const limit = req.query.limit;
+	const page = req.query.page;
+	let offset = 0;
+	Entry.findAndCountAll().then((data) => {
+		let pages = Math.ceil(data.count / limit);
+		offset = limit * (page - 1);
+		Entry.findAll({
+			attributes: ['id', 'title', 'createdAt'],
+			order: [
+				['id', 'DESC'],
+			],
+			include: [{model: User, attributes: ['id', 'username']}],
+			limit: limit,
+			offset: offset
+		}).then((entries) => {
+			res.status(200).send({data: entries, count: data.count, pages: pages, page: page});
+		})
 	});
-	res.status(200).send(entries);
 });
 app.get('/entry/:id', async (req, res) => {
 	const entry = await Entry.findByPk(parseInt(req.params.id));
@@ -142,6 +151,16 @@ app.post('/entry', async (req, res) => {
         entry: newEntry
     });
 });
+app.get('/random', async (req, res) => {
+	const entry = await Entry.create({
+		userId: 1,
+		content: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 10),
+		title: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 10)
+	});
+	res.status(201).send({
+		entry: entry
+	});
+})
 app.put('/entry/:id', async (req, res) => {
 	let entry = await Entry.findByPk(parseInt(req.params.id));
 	entry.userId = req.body.userId;
