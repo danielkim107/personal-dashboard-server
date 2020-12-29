@@ -7,6 +7,9 @@ services:
     depends_on: 
       - db
     restart: always
+    volumes:
+      - ./:/usr/src/app
+    command: nodemon db.js
   db:
     image: postgres:12
     restart: always
@@ -16,3 +19,8 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: db
       POSTGRES_USER: postgres
+  redis:
+    image: redis:6.0
+    restart: always
+    ports: 
+      - "6379:6379"
