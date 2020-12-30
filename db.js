@@ -116,7 +116,6 @@ app.get('/entry', (req, res) => {
 	const page = req.query.page;
 	let offset = 0;
 	Entry.findAndCountAll().then((data) => {
-		let pages = Math.ceil(data.count / limit);
 		offset = limit * (page - 1);
 		Entry.findAll({
 			attributes: ['id', 'title', 'createdAt'],
@@ -127,7 +126,7 @@ app.get('/entry', (req, res) => {
 			limit: limit,
 			offset: offset
 		}).then((entries) => {
-			res.status(200).send({data: entries, count: data.count, pages: pages, page: page});
+			res.status(200).send({data: entries, count: data.count});
 		})
 	});
 });
@@ -160,7 +159,7 @@ app.get('/random', async (req, res) => {
 	res.status(201).send({
 		entry: entry
 	});
-})
+});
 app.put('/entry/:id', async (req, res) => {
 	let entry = await Entry.findByPk(parseInt(req.params.id));
 	entry.userId = req.body.userId;
