@@ -44,6 +44,9 @@ for (const [routeName, routeController] of Object.entries(modelRoutes)) {
 	if (routeController.login) {
 		app.post(`/api/${routeName}/login`, routeController.login);
 	}
+	if (routeController.reset) {
+		app.get(`/api/${routeName}/reset`, routeController.reset);
+	}
 }
 
 module.exports = app;

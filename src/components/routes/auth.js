@@ -1,4 +1,4 @@
-import { sequelize } from '../../models';
+import { sequelize } from '../../sequelize';
 
 const User = sequelize.models.user;
 
@@ -26,6 +26,12 @@ async function login(req, res) {
 	}
 };
 
+async function reset(req, res) {
+	await sequelize.sync({ force: true });
+	res.status(200).send('리셋했습니다');
+}
+
 module.exports = {
 	login,
+	reset,
 };
