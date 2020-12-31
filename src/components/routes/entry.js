@@ -1,4 +1,4 @@
-import { sequelize } from '../../models';
+import { sequelize } from '../../sequelize';
 
 const Entry = sequelize.models.entry;
 const User = sequelize.models.user;
