@@ -1,4 +1,6 @@
+build/
 db_data/
 node_modules/
 public/bower_components/
+build/
 dump.rdb
