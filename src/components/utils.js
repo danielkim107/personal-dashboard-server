@@ -11,6 +11,10 @@ function getPaginationData(query) {
 	return data;
 }
 
+function getParamId (params) {
+	return parseInt(params.id);
+}
+
 async function getModelCount(model) {
 	let data = await model.findAndCountAll();
 	return data.count;
@@ -19,4 +23,5 @@ async function getModelCount(model) {
 module.exports = {
 	getPaginationData,
 	getModelCount,
+	getParamId,
 }
