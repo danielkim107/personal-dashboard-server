@@ -10,6 +10,8 @@ const modelRoutes = {
 	auth: require('./routes/auth'),
 	entry: require('./routes/entry'),
 	user: require('./routes/user'),
+	student: require('./routes/student'),
+	admin: require('./routes/admin'),
 };
 
 const app = express();
@@ -46,6 +48,9 @@ for (const [routeName, routeController] of Object.entries(modelRoutes)) {
 	}
 	if (routeController.reset) {
 		app.get(`/api/${routeName}/reset`, routeController.reset);
+	}
+	if (routeController.createSuperuser) {
+		app.post(`/api/${routeName}/superUser`, routeController.createSuperuser);
 	}
 }
 
