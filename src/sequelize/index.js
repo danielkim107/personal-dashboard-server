@@ -10,6 +10,7 @@ export const sequelize = new Sequelize('db', 'postgres', 'postgres', {
 const modelDefiners = [
 	require('./models/user'),
 	require('./models/entry'),
+	require('./models/slot'),
 ];
 
 for (const modelDefiner of modelDefiners) {
