@@ -1,5 +1,5 @@
 import { sequelize } from '../../sequelize';
-import { getPaginationData, getModelCount } from '../utils';
+import { getPaginationData, getModelCount, getParamId } from '../utils';
 
 const Entry = sequelize.models.entry;
 const User = sequelize.models.user;
@@ -22,7 +22,7 @@ async function getList(req, res) {
 };
 
 async function getById(req, res) {
-	const id = parseInt(req.params.id);
+	const id = getParamId(req.params);
 	const entry = await Entry.findByPk(id);
 	if (entry) {
 		res.status(200).send(entry);
@@ -32,28 +32,18 @@ async function getById(req, res) {
 };
 
 async function create(req, res) {
-	const body = {
-		userId: req.body.userId,
-		content: req.body.content,
-		title: req.body.title,
-	};
-	await Entry.create(body);
+	await Entry.create(req.body);
 	res.status(201).end();
 };
 
 async function update(req, res) {
-	const id = parseInt(req.params.id);
-	const body = {
-		userId: req.body.userId,
-		content: req.body.content,
-		title: req.body.title,
-	};
-	await Entry.update(body, { where: { id: id } });
+	const id = getParamId(req.params);
+	await Entry.update(req.body, { where: { id: id } });
 	res.status(200).end();
 };
 
 async function remove(req, res) {
-	const id = parseInt(req.params.id);
+	const id = getParamId(req.params);
 	await Entry.destroy({ where: { id: id } });
 	res.status(204).end();
 };
