@@ -23,9 +23,17 @@ async function getById(req, res) {
 };
 
 async function create(req, res) {
+	await User.create(req.body);
+	res.status(201).end();
+};
+
+async function createSuperuser(req, res) {
 	const body = {
 		username: req.body.username,
 		password: req.body.password,
+		isSuperuser: true,
+		isAdmin: true,
+		isStudent: true,
 	};
 	await User.create(body);
 	res.status(201).end();
@@ -51,6 +59,7 @@ module.exports = {
 	getList,
 	getById,
 	create,
+	createSuperuser,
 	update,
 	remove,
 };
