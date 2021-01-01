@@ -1,12 +1,12 @@
 import { sequelize } from '../../sequelize';
+import { getPaginationData } from '../utils';
 
 const Entry = sequelize.models.entry;
 const User = sequelize.models.user;
 
 async function getList(req, res) {
-	const limit = req.query.limit || 25;
-	const page = req.query.page || 1;
-	const offset = limit * (page - 1);
+	const paginationData = getPaginationData(req.query);
+	const countData = await Entry.findAndCountAll();
 	const entries = await Entry.findAll({
 		attributes: [
 			'id', 'title', 'createdAt'
@@ -15,11 +15,9 @@ async function getList(req, res) {
 			['id', 'DESC'],
 		],
 		include: [{model: User, attributes: ['id', 'username']}],
-		limit: limit,
-		offset: offset,
+		limit: paginationData.limit,
+		offset: paginationData.offset,
 	});
-
-	const countData = await Entry.findAndCountAll();
 	res.status(200).send({data: entries, count: countData.count});
 };
 
