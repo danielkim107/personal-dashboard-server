@@ -9,19 +9,19 @@ function getPaginationData(query) {
 	}
 	data.offset = data.limit * (query.page - 1);
 	return data;
-}
+};
 
 function getParamId (params) {
 	return parseInt(params.id);
-}
+};
 
 async function getModelCount(model) {
 	let data = await model.findAndCountAll();
 	return data.count;
-}
+};
 
 module.exports = {
 	getPaginationData,
 	getModelCount,
 	getParamId,
-}
+};

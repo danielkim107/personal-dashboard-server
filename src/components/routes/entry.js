@@ -6,7 +6,7 @@ const User = sequelize.models.user;
 
 async function getList(req, res) {
 	const paginationData = getPaginationData(req.query);
-	const count = getModelCount(Entry);
+	const count = await getModelCount(Entry);
 	const entries = await Entry.findAll({
 		attributes: [
 			'id', 'title', 'createdAt'
@@ -32,14 +32,14 @@ async function getById(req, res) {
 };
 
 async function create(req, res) {
-	await Entry.create(req.body);
-	res.status(201).end();
+	const entry = await Entry.create(req.body);
+	res.status(201).send(entry);
 };
 
 async function update(req, res) {
 	const id = getParamId(req.params);
-	await Entry.update(req.body, { where: { id: id } });
-	res.status(200).end();
+	const [count, entry] = await Entry.update(req.body, { where: { id: id } });
+	res.status(200).send(count);
 };
 
 async function remove(req, res) {
