@@ -3,8 +3,10 @@ import { sequelize } from '../../sequelize';
 const Student = sequelize.models.student;
 
 async function getList(req, res) {
-	const students = await User.findAll({
-		attributes: ['id', 'name', 'defaultHour', 'price'],
+	const teacherId = req.query.teacherId;
+	const students = await Student.findAll({
+		where: { teacherId: teacherId },
+		attributes: ['id', 'name', 'tutorDays',],
 		order: [
 			['name', 'DESC'],
 		],
