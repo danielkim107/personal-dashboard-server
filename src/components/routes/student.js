@@ -14,7 +14,9 @@ async function getList(req, res) {
 
 async function getById(req, res) {
 	const id = parseInt(req.params.id);
-	const student = await Student.findByPk(id);
+	const student = await Student.findByPk(id, {
+		attributes: ['name', 'defaultHour', 'price', 'tutorDays',],
+	});
 	if (student) {
 		res.status(200).send(student);
 	} else {

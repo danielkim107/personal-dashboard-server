@@ -17,12 +17,12 @@ async function login(req, res) {
 			] 
 		});
 		if (user === null) {
-			res.status(400).send({ message: 'Incorrect username and/or password!' });
+			res.status(400).end();
 		} else {
-			res.status(200).send({ message: 'User has been authenticated.', user: user });
+			res.status(200).send(user);
 		}
 	} else {
-		res.status(400).send({ message: 'Incorrect username and/or password!' });
+		res.status(400).end();
 	}
 };
 
