@@ -1,12 +1,12 @@
 import { sequelize } from '../../sequelize';
 
-const User = sequelize.models.user;
+const Teacher = sequelize.models.teacher;
 
 async function login(req, res) {
 	const username = req.body.username;
 	const password = req.body.password;
 	if (username && password) {
-		const user = await User.findOne({ 
+		const user = await Teacher.findOne({ 
 			where: { 
 				username: username, 
 				password: password

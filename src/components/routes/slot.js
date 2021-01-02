@@ -4,22 +4,22 @@ import { getParamId } from '../utils';
 const Slot = sequelize.model.slot;
 
 async function getList(req, res) {
-	const users = await Slot.findAll({
-		attributes: ['id', 'time', 'startAt',],
+	const slots = await Slot.findAll({
+		attributes: ['id', 'time', 'startAt', 'totalAmount',],
 		order: [
-			['id', 'DESC'],
+			['startAt', 'DESC'],
 		],
 	});
-	res.status(200).send(users);
+	res.status(200).send(slots);
 };
 
 async function getById(req, res) {
 	const id = getParamId(req.params);
-	const user = await Slot.findByPk(id);
+	const slot = await Slot.findByPk(id);
 	if (entry) {
-		res.status(200).send(user);
+		res.status(200).send(slot);
 	} else {
-		res.status(400).send({ message: 'User not found. '});
+		res.status(400).send({ message: 'Slot not found. '});
 	}
 };
 

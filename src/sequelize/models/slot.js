@@ -5,14 +5,14 @@ module.exports = (sequelize, DataTypes) => {
 			primaryKey: true,
 			type: DataTypes.INTEGER
 		},
-		time: {
+		date: {
+			allowNull: false,
+			type: DataTypes.DATE
+		},
+		totalAmount: {
 			allowNull: false,
 			type: DataTypes.INTEGER
 		},
-		startAt: {
-			allowNull: false,
-			type: DataTypes.DATE
-		}
 	});
 	return slot;
 }

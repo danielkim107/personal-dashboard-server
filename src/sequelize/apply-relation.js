@@ -1,11 +1,16 @@
 function applyRelation(sequelize) {
-	const { entry, user, slot } = sequelize.models;
-	// Entry Relations
-	entry.belongsTo(user, { foreignKey: 'userId' });
+	sequelize.define('Student_Slots', {}, { timestamps: false });
+	const { student, teacher, slot } = sequelize.models;
+	// Student Relations
+	student.belongsTo(teacher, { foreignKey: 'teacherId', as: 'teacher' });
+	student.belongsToMany(slot, { through: 'Student_Slots'});
+
+	// Teacher Relations
+	teacher.hasMany(student, { foreignKey: 'teacherId', as: 'students' });
 
 	// Slot Relations
-	slot.belongsTo(user, { foreignKey: 'adminId' });
-	slot.belongsTo(user, { foreignKey: 'studentId' });
+	slot.belongsTo(teacher, { foreignKey: 'teacherId', as: 'teacher' });
+	slot.belongsToMany(student, { through: 'Student_Slots' });
 }
 
 module.exports = { applyRelation };

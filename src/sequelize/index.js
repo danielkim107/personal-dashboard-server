@@ -8,8 +8,8 @@ export const sequelize = new Sequelize('db', 'postgres', 'postgres', {
 })
 
 const modelDefiners = [
-	require('./models/user'),
-	require('./models/entry'),
+	require('./models/teacher'),
+	require('./models/student'),
 	require('./models/slot'),
 ];
 

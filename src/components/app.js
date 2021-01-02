@@ -8,10 +8,9 @@ import bodyParser from "body-parser";
 
 const modelRoutes = {
 	auth: require('./routes/auth'),
-	entry: require('./routes/entry'),
-	user: require('./routes/user'),
+	slot: require('./routes/slot'),
 	student: require('./routes/student'),
-	admin: require('./routes/admin'),
+	teacher: require('./routes/teacher'),
 };
 
 const app = express();
@@ -48,9 +47,6 @@ for (const [routeName, routeController] of Object.entries(modelRoutes)) {
 	}
 	if (routeController.reset) {
 		app.get(`/api/${routeName}/reset`, routeController.reset);
-	}
-	if (routeController.createSuperuser) {
-		app.post(`/api/${routeName}/superUser`, routeController.createSuperuser);
 	}
 }
 
