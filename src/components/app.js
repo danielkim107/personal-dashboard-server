@@ -48,6 +48,9 @@ for (const [routeName, routeController] of Object.entries(modelRoutes)) {
 	if (routeController.reset) {
 		app.get(`/api/${routeName}/reset`, routeController.reset);
 	}
+	if (routeController.getByDate) {
+		app.get(`/api/${routeName}Date`, routeController.getByDate);
+	}
 }
 
 module.exports = app;

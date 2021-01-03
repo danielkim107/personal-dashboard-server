@@ -1,11 +1,12 @@
+import { Op } from 'sequelize';
 import { sequelize } from '../../sequelize';
-import { getParamId } from '../utils';
+import { getParamId, getDefaultStudentSlotInfo } from '../utils';
 
-const Slot = sequelize.model.slot;
+const Slot = sequelize.models.slot;
 
 async function getList(req, res) {
 	const slots = await Slot.findAll({
-		attributes: ['id', 'time', 'startAt', 'totalAmount',],
+		attributes: ['id', 'date', 'studentHours', 'totalAmount',],
 		order: [
 			['startAt', 'DESC'],
 		],
@@ -20,6 +21,29 @@ async function getById(req, res) {
 		res.status(200).send(slot);
 	} else {
 		res.status(400).send({ message: 'Slot not found. '});
+	}
+};
+
+async function getByDate(req, res) {
+	const teacherId = req.query.teacherId;
+	const date = req.query.date;
+
+	const [studentHours, totalAmount] = await getDefaultStudentSlotInfo(teacherId, date);
+
+	const [slot, created] = await Slot.findOrCreate({
+		where: { 
+			teacherId: teacherId,
+			date: {
+				[Op.eq]: date.concat(' 00:00:00.000 +00:00'),
+			} ,
+		},
+		defaults: {studentHours: studentHours, totalAmount: totalAmount, date: date, teacherId: teacherId},
+	});
+
+	if (created) {
+		res.status(201).send(slot);
+	} else {
+		res.status(200).send(slot);
 	}
 };
 
@@ -43,6 +67,7 @@ async function remove(req, res) {
 module.exports = {
 	getList,
 	getById,
+	getByDate,
 	create,
 	update,
 	remove,
