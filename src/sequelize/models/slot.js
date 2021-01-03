@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull: false,
 			type: DataTypes.DATE
 		},
+		studentHours: {
+			allowNull: false,
+			type: DataTypes.ARRAY(DataTypes.JSON)
+		},
 		totalAmount: {
 			allowNull: false,
 			type: DataTypes.INTEGER
