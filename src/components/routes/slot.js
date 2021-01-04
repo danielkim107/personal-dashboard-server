@@ -6,7 +6,7 @@ const Slot = sequelize.models.slot;
 
 async function getList(req, res) {
 	const slots = await Slot.findAll({
-		attributes: ['id', 'date', 'studentHours', 'totalAmount',],
+		attributes: ['id', 'date', 'studentInfo', 'totalAmount',],
 		order: [
 			['startAt', 'DESC'],
 		],
@@ -16,8 +16,11 @@ async function getList(req, res) {
 
 async function getById(req, res) {
 	const id = getParamId(req.params);
-	const slot = await Slot.findByPk(id);
-	if (entry) {
+	const slot = await Slot.findOne({ 
+		where: { id: id },
+		attributes: ['date', 'studentInfo', 'totalAmount',],
+	});
+	if (slot) {
 		res.status(200).send(slot);
 	} else {
 		res.status(400).send({ message: 'Slot not found. '});
@@ -28,23 +31,20 @@ async function getByDate(req, res) {
 	const teacherId = req.query.teacherId;
 	const date = req.query.date;
 
-	const [studentHours, totalAmount] = await getDefaultStudentSlotInfo(teacherId, date);
+	const [studentInfo, totalAmount] = await getDefaultStudentSlotInfo(teacherId, date);
 
-	const [slot, created] = await Slot.findOrCreate({
+	const [slot, _] = await Slot.findOrCreate({
 		where: { 
 			teacherId: teacherId,
 			date: {
 				[Op.eq]: date.concat(' 00:00:00.000 +00:00'),
 			} ,
 		},
-		defaults: {studentHours: studentHours, totalAmount: totalAmount, date: date, teacherId: teacherId},
+		defaults: {studentInfo: studentInfo, totalAmount: totalAmount, date: date, teacherId: teacherId},
+		attributes: ['id', 'date', 'studentInfo', 'totalAmount',],
 	});
 
-	if (created) {
-		res.status(201).send(slot);
-	} else {
-		res.status(200).send(slot);
-	}
+	res.status(200).send({id: slot.id});
 };
 
 async function create(req, res) {
