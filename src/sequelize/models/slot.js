@@ -9,13 +9,17 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull: false,
 			type: DataTypes.DATE
 		},
-		studentHours: {
+		studentInfo: {
 			allowNull: false,
 			type: DataTypes.ARRAY(DataTypes.JSON)
 		},
 		totalAmount: {
 			allowNull: false,
 			type: DataTypes.INTEGER
+		},
+		memo: {
+			allowNull: true,
+			type: DataTypes.TEXT
 		},
 	});
 	return slot;
