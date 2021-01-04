@@ -12,24 +12,34 @@ async function getModelCount(model) {
 async function getDefaultStudentSlotInfo(teacherId, date) {
 	const today = new Date(date).getDay();
 	const Student = sequelize.models.student;
-	let studentHours = [];
+	let studentInfo = [];
 	let totalAmount = 0;
 	const students = await Student.findAll({
 		where: { teacherId: teacherId },
 		attributes: ['id', 'name', 'defaultHour', 'price', 'tutorDays',],
 		order: [
-			['name', 'DESC'],
+			['id', 'DESC'],
 		],
 	});
 	students.forEach(student => {
 		if (student.tutorDays.includes(today)) {
-			studentHours.push({studentId: student.id, hours: student.defaultHour});
+			studentInfo.push({
+				studentId: student.id, 
+				hours: student.defaultHour, 
+				price: student.price,
+				name: student.name,
+			});
 			totalAmount += student.defaultHour * student.price;
 		} else {
-			studentHours.push({studentId: student.id, hours: 0});
+			studentInfo.push({
+				studentId: student.id, 
+				hours: 0, 
+				price: student.price,
+				name: student.name,
+			});
 		}
 	});
-	return [studentHours, totalAmount];
+	return [studentInfo, totalAmount];
 };
 
 module.exports = {
