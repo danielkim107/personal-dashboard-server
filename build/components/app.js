@@ -30,8 +30,9 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 var modelRoutes = {
   auth: require('./routes/auth'),
-  entry: require('./routes/entry'),
-  user: require('./routes/user')
+  slot: require('./routes/slot'),
+  student: require('./routes/student'),
+  teacher: require('./routes/teacher')
 };
 var app = (0, _express["default"])();
 app.use((0, _morgan["default"])('short'));
@@ -77,6 +78,14 @@ for (var _i = 0, _Object$entries = Object.entries(modelRoutes); _i < _Object$ent
 
   if (routeController.login) {
     app.post("/api/".concat(routeName, "/login"), routeController.login);
+  }
+
+  if (routeController.reset) {
+    app.get("/api/".concat(routeName, "/reset"), routeController.reset);
+  }
+
+  if (routeController.getByDate) {
+    app.get("/api/".concat(routeName, "Date"), routeController.getByDate);
   }
 }
 
