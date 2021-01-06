@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		date: {
 			allowNull: false,
-			type: DataTypes.DATE
+			type: DataTypes.DATEONLY
 		},
 		studentInfo: {
 			allowNull: false,
