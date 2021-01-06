@@ -18,7 +18,7 @@ async function getById(req, res) {
 	const id = getParamId(req.params);
 	const slot = await Slot.findOne({ 
 		where: { id: id },
-		attributes: ['date', 'studentInfo', 'totalAmount',],
+		attributes: ['date', 'studentInfo', 'totalAmount', 'memo',],
 	});
 	if (slot) {
 		res.status(200).send(slot);
@@ -36,9 +36,7 @@ async function getByDate(req, res) {
 	const [slot, _] = await Slot.findOrCreate({
 		where: { 
 			teacherId: teacherId,
-			date: {
-				[Op.eq]: date.concat(' 00:00:00.000 +00:00'),
-			} ,
+			date: date,
 		},
 		defaults: {studentInfo: studentInfo, totalAmount: totalAmount, date: date, teacherId: teacherId},
 		attributes: ['id', 'date', 'studentInfo', 'totalAmount',],

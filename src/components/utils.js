@@ -16,15 +16,16 @@ async function getDefaultStudentSlotInfo(teacherId, date) {
 	let totalAmount = 0;
 	const students = await Student.findAll({
 		where: { teacherId: teacherId },
-		attributes: ['id', 'name', 'defaultHour', 'price', 'tutorDays',],
+		attributes: ['id', 'name', 'defaultHour', 'defaultTimeStart', 'defaultTimeEnd', 'price', 'tutorDays',],
 		order: [
-			['id', 'DESC'],
+			['defaultTimeStart', 'ASC'],
 		],
 	});
 	students.forEach(student => {
 		if (student.tutorDays.includes(today)) {
 			studentInfo.push({
-				studentId: student.id, 
+				studentId: student.id,
+				timeRange: [student.defaultTimeStart, student.defaultTimeEnd],
 				hours: student.defaultHour, 
 				price: student.price,
 				name: student.name,
@@ -32,7 +33,8 @@ async function getDefaultStudentSlotInfo(teacherId, date) {
 			totalAmount += student.defaultHour * student.price;
 		} else {
 			studentInfo.push({
-				studentId: student.id, 
+				studentId: student.id,
+				timeRange: ['', ''],
 				hours: 0, 
 				price: student.price,
 				name: student.name,
