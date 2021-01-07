@@ -5,10 +5,19 @@ import { getParamId, getDefaultStudentSlotInfo } from '../utils';
 const Slot = sequelize.models.slot;
 
 async function getList(req, res) {
+	const start = req.query.start;
+	const end = req.query.end;
+
 	const slots = await Slot.findAll({
-		attributes: ['id', 'date', 'studentInfo', 'totalAmount',],
+		where: {
+			date: {
+				[Op.gte]: start,
+				[Op.lte]: end,
+			},
+		},
+		attributes: ['id', 'date', 'studentInfo',],
 		order: [
-			['startAt', 'DESC'],
+			['date', 'ASC'],
 		],
 	});
 	res.status(200).send(slots);
