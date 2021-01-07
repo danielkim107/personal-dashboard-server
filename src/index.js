@@ -1,5 +1,5 @@
 import app from './components/app';
-import { sequelize } from './models';
+import { sequelize } from './sequelize';
 
 const PORT = 4000;
 

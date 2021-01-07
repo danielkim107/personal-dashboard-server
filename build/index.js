@@ -2,7 +2,7 @@
 
 var _app = _interopRequireDefault(require("./components/app"));
 
-var _models = require("./models");
+var _sequelize = require("./sequelize");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -25,7 +25,7 @@ function _assertDatabaseConnectionOk() {
             console.log("Checking database connection...");
             _context.prev = 1;
             _context.next = 4;
-            return _models.sequelize.authenticate();
+            return _sequelize.sequelize.authenticate();
 
           case 4:
             console.log('Database connection OK!');

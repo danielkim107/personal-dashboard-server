@@ -1,8 +1,6 @@
-const { DataTypes } = require('sequelize');
-
-module.exports = (sequelize) => {
-	const user = sequelize.define(
-		'user', {
+module.exports = (sequelize, DataTypes) => {
+	const teacher = sequelize.define(
+		'teacher', {
 			id: {
 				autoIncrement: true,
 				primaryKey: true,
@@ -12,11 +10,15 @@ module.exports = (sequelize) => {
 				allowNull: false,
 				type: DataTypes.TEXT
 			},
+			name: {
+				allowNull: false,
+				type: DataTypes.TEXT
+			},
 			password: {
 				allowNull: false,
 				type: DataTypes.TEXT
-			}
+			},
 		}
 	);
-	return user;
+	return teacher;
 }

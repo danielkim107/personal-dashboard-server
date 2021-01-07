@@ -8,8 +8,9 @@ import bodyParser from "body-parser";
 
 const modelRoutes = {
 	auth: require('./routes/auth'),
-	entry: require('./routes/entry'),
-	user: require('./routes/user'),
+	slot: require('./routes/slot'),
+	student: require('./routes/student'),
+	teacher: require('./routes/teacher'),
 };
 
 const app = express();
@@ -43,6 +44,12 @@ for (const [routeName, routeController] of Object.entries(modelRoutes)) {
 	}
 	if (routeController.login) {
 		app.post(`/api/${routeName}/login`, routeController.login);
+	}
+	if (routeController.reset) {
+		app.get(`/api/${routeName}/reset`, routeController.reset);
+	}
+	if (routeController.getByDate) {
+		app.get(`/api/${routeName}Date`, routeController.getByDate);
 	}
 }
 

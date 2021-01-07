@@ -1,4 +1,4 @@
-const Sequelize = require('sequelize');
+import {Sequelize, DataTypes} from 'sequelize';
 import { applyRelation } from './apply-relation';
 
 export const sequelize = new Sequelize('db', 'postgres', 'postgres', {
@@ -8,12 +8,13 @@ export const sequelize = new Sequelize('db', 'postgres', 'postgres', {
 })
 
 const modelDefiners = [
-	require('./user'),
-	require('./entry'),
+	require('./models/teacher'),
+	require('./models/student'),
+	require('./models/slot'),
 ];
 
 for (const modelDefiner of modelDefiners) {
-	modelDefiner(sequelize);
+	modelDefiner(sequelize, DataTypes);
 }
 
 applyRelation(sequelize);

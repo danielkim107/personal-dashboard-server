@@ -1,12 +1,12 @@
-import { sequelize } from '../../models';
+import { sequelize } from '../../sequelize';
 
-const User = sequelize.models.user;
+const Teacher = sequelize.models.teacher;
 
 async function login(req, res) {
 	const username = req.body.username;
 	const password = req.body.password;
 	if (username && password) {
-		const user = await User.findOne({ 
+		const user = await Teacher.findOne({ 
 			where: { 
 				username: username, 
 				password: password
@@ -17,15 +17,21 @@ async function login(req, res) {
 			] 
 		});
 		if (user === null) {
-			res.status(400).send({ message: 'Incorrect username and/or password!' });
+			res.status(400).end();
 		} else {
-			res.status(200).send({ message: 'User has been authenticated.', user: user });
+			res.status(200).send(user);
 		}
 	} else {
-		res.status(400).send({ message: 'Incorrect username and/or password!' });
+		res.status(400).end();
 	}
 };
 
+async function reset(req, res) {
+	await sequelize.sync({ force: true });
+	res.status(200).send('리셋했습니다');
+}
+
 module.exports = {
 	login,
+	reset,
 };
